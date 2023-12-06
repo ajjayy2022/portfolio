@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Particle Interaction</title>
+  <style>
+    /* CSS styles for canvas */
+    canvas {
+      display: block;
+    }
+  </style>
+</head>
+<body>
+  <canvas id="canvas"></canvas>
+
+  <script>
+    // JavaScript code for particle interaction
+    var canvas = document.getElementById("canvas");
+    var ctx = canvas.getContext("2d");
+    var particles = [];
+    var mouseX = 0;
+    var mouseY = 0;
+
+    // Set canvas size
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+
+    // Event listener for mouse movement
+    canvas.addEventListener("mousemove", function(e) {
+      var rect = canvas.getBoundingClientRect();
+      mouseX = e.clientX - rect.left;
+      mouseY = e.clientY - rect.top;
+    });
+
+    // Particle class
+    function Particle(x, y) {
+      this.x = x;
+      this.y = y;
+      this.radius = 2;
+      this.speed = 2;
+      this.angle = Math.random() * 2 * Math.PI;
+
+      // Update particle position
+      this.update = function() {
+        var xDistance = this.x - mouseX;
+        var yDistance = this.y - mouseY;
+        var distance = Math.sqrt(xDistance * xDistance + yDistance * yDistance);
+
+        if (distance < 20) {
+          this.angle = Math.atan2(yDistance, xDistance);
+          this.x += Math.cos(this.angle) * this.speed;
+          this.y += Math.sin(this.angle) * this.speed;
+        }
+
+        // Draw particle
+        ctx.fillRect(this.x, this.y, this.radius, this.radius);
+      };
+    }
+
+    // Create particles
+    function createParticles() {
+      for (var i = 0; i < 100; i++) {
+        var x = Math.random() * canvas.width;
+        var y = Math.random() * canvas.height;
+        particles.push(new Particle(x, y));
+      }
+    }
+
+    // Animation loop
+    function animate() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+      for (var i = 0; i < particles.length; i++) {
+        particles[i].update();
+      }
+
+      requestAnimationFrame(animate);
+    }
+
+    // Initialize particles and start animation
+    createParticles();
+    animate();
+  </script>
+</body>
+</html>
